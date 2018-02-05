@@ -46,6 +46,8 @@ $ python remo.py get_appliances
 `戻り値`
 JSON形式
 
+ファイルに保存する場合、リダイレクトを利用する。 例) ... > appliances.json
+
 ### 赤外線の送信
 
 $ python remo.py send_signal --nickname nickname --name name
