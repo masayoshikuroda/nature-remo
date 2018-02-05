@@ -34,6 +34,8 @@ $ python remo.py get_temp -n 0
 `戻り値`
 JSON形式
 
+値のみ取得したい場合、jqコマンドを利用する。 例) ...| jq '.te.val'
+
 ### 家電情報の取得
 
 $ python remo.py get_appliances
