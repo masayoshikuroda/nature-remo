@@ -26,11 +26,10 @@ Nature RemoのAPIを発行し、家電を制御する。
 
 ### 温度、湿度の取得
 
-$ python remo.py get_temp
+$ python remo.py get_temp -n 0
 
 `引数`
-- nickname: いわゆる家電の名前
-- name: いわゆるボタンの名前
+なし
 
 `戻り値`
 JSON形式
