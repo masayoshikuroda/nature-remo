@@ -26,14 +26,15 @@ Nature RemoのAPIを発行し、家電を制御する。
 
 ### 温度、湿度の取得
 
-$ python remo.py get_temp
+$ python remo.py get_temp -n 0
 
 `引数`
-- nickname: いわゆる家電の名前
-- name: いわゆるボタンの名前
+なし
 
 `戻り値`
 JSON形式
+
+値のみ取得したい場合、jqコマンドを利用する。 例) ...| jq '.te.val'
 
 ### 家電情報の取得
 
@@ -44,6 +45,8 @@ $ python remo.py get_appliances
 
 `戻り値`
 JSON形式
+
+ファイルに保存する場合、リダイレクトを利用する。 例) ... > appliances.json
 
 ### 赤外線の送信
 
