@@ -26,7 +26,7 @@ Nature RemoのAPIを発行し、家電を制御する。
 
 ### 温度、湿度の取得
 
-$ python remo.py get_temp -n 0
+$ python remo.py get_events -n 0
 
 `引数`
 なし
@@ -50,7 +50,7 @@ JSON形式
 
 ### 赤外線の送信
 
-$ python remo.py send_signal --nickname nickname --name name
+$ python remo.py post_signal --nickname nickname --name name
 
 `引数`
 - nickname: いわゆる家電の名前
