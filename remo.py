@@ -13,11 +13,12 @@ TOKEN_FILE      = os.path.join(BASE_PATH, 'token.txt')
 APPLIANCES_FILE = os.path.join(BASE_PATH, 'appliances.json')
 
 usage = 'Usage: python {} command [--dev_no dev_no] [--nickname nickname] [--name name]'.format(__file__)
+commands = '|'.join(['get_events', 'get_appliances', 'post_signal'])
 argparser = ArgumentParser(usage=usage)
-argparser.add_argument('command', type=str, help='[get_temp|get_appliances|send_signal]')
-argparser.add_argument('-d', '--dev_no', type=int, dest='dev_no', help='device number for reading temperature')
+argparser.add_argument('command', type=str, help=commands)
+argparser.add_argument('-d', '--dev_no', type=int, dest='dev_no', default=0, help='device number for reading temperature')
 argparser.add_argument('-a', '--nickname', type=str, dest='nickname', help='appliance name')
-argparser.add_argument('-n', '--name', type=str, dest='name', help='signal name')
+argparser.add_argument('-s', '--name', type=str, dest='name', help='signal name')
 args = argparser.parse_args()
 
 def get_token():
@@ -26,32 +27,43 @@ def get_token():
     f.close()
     return token
 
+def get_appliance(nickname):
+    appliances = []
+    with open(APPLIANCES_FILE, 'r') as f:
+        appliances = json.load(f)
+
+    matched = filter(lambda a:a['nickname'] == nickname, appliances)
+    if len(matched) == 0:
+        raise ValueError(nickname)
+    return matched[0]
+
+def get_signal(nickname, name):
+    appliance = get_appliance(nickname)
+    signals = appliance['signals']
+
+    matched = filter(lambda s:s['name'] == name, signals)
+    if len(matched) == 0:
+        raise ValueError(name)
+    return matched[0]
+
 def get_signal_id(nickname, name):
-    f = open(APPLIANCES_FILE, 'r')
-    json_dict = json.load(f)
-    for appliance in json_dict:
-        if appliance['nickname'] != nickname:
-            continue
-        for signal in appliance['signals']:
-            if signal['name'] == name:
-                return signal['id']
-    f.close()
-    return None
+    signal = get_signal(nickname, name)
+    return signal['id']
 
 url = BASE_URL
 data = None
-if args.command =='get_temp':
+if args.command.startswith('get_eve'):
     url += "/1/devices"
-elif args.command == 'get_appliances':
+elif args.command.startswith('get_app'):
     url += "/1/appliances"
-elif args.command == 'send_signal':
+elif args.command.startswith('post_sig'):
     nickname = args.nickname.decode('utf-8')
     name = args.name.decode('utf-8')
     signal_id = get_signal_id(nickname, name)
     url += "/1/signals/" + signal_id + "/send"
     data = "\r\n"
 else:
-    print "Command error: ", args.command
+    print("Command error: ", args.command)
     sys.exit(1)
 # print url
 
@@ -61,15 +73,16 @@ req = Request(url, data=data, headers=headers)
 try:
     res = urlopen(req)
 except HTTPError, e:
-    print 'Error code: ', e.getcode()
+    print('Error code: ', e.getcode())
     sys.exit(1)
 except URLError as e:
-    print 'Reason: ', e.reason
+    print('Reason: ', e.reason)
     sys.exit(1)
 
 body = res.read()
-if args.command == 'get_temp':
+
+if args.command.startswith('get_eve'):
     body = json.loads(body)[args.dev_no]['newest_events']
     body = json.dumps(body)
 
-print body
+print(body)
