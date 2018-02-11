@@ -59,4 +59,14 @@ $ python remo.py post_signal --nickname nickname --name name
 `戻り値`
 なし
 
+## Local APIの利用
 
+lremo.pyを利用します。
+
+### メッセージの取得
+
+$ python lremo.py Remo-xxxxx.local -get > signal.json
+
+### メッセージの送信
+
+$ python lremo.py Remo-xxxxx.local -post -f signal.json
