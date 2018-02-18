@@ -59,6 +59,26 @@ $ python remo.py post_signal --nickname nickname --name name
 `戻り値`
 なし
 
+### エアコンの設定
+
+エアコン自動運転開始
+$python remo.py post_aircon --nickname aircon_nickname -t 0 -m auto -v auto -i auto
+
+エアコン停止
+$python remo.py post_aircon --nickname aircon_nickname -b power-off
+
+`引数`
+- nickname: エアコンの名前
+- -t temp: 設定温度
+- -m mode: エアコンモード
+- -v vol: エアコン風量
+- -i dir: エアコン風向き
+- -b button: 停止時に指定
+
+
+`戻り値`
+なし
+
 ## Local APIの利用
 
 lremo.pyを利用します。
