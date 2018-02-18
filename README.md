@@ -29,7 +29,7 @@ Nature RemoのAPIを発行し、家電を制御する。
 $ python remo.py get_events -n 0
 
 `引数`
-なし
+JSON形式
 
 `戻り値`
 JSON形式
@@ -57,12 +57,12 @@ $ python remo.py post_signal --nickname nickname --name name
 - name: いわゆるボタンの名前
 
 `戻り値`
-なし
+JSON形式
 
 ### エアコンの設定
 
 エアコン自動運転開始
-$python remo.py post_aircon --nickname aircon_nickname -t 0 -m auto -v auto -i auto
+$python remo.py post_aircon --nickname nickname -t 0 -m auto -v auto -i auto
 
 エアコン停止
 $python remo.py post_aircon --nickname aircon_nickname -b power-off
@@ -77,7 +77,7 @@ $python remo.py post_aircon --nickname aircon_nickname -b power-off
 
 
 `戻り値`
-なし
+JSON形式
 
 ## Local APIの利用
 
