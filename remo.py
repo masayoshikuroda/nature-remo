@@ -4,6 +4,7 @@
 import sys
 import os
 import json
+from urllib import urlencode
 from urllib2 import Request, urlopen, URLError, HTTPError
 from argparse import ArgumentParser
 
@@ -13,12 +14,17 @@ TOKEN_FILE      = os.path.join(BASE_PATH, 'token.txt')
 APPLIANCES_FILE = os.path.join(BASE_PATH, 'appliances.json')
 
 usage = 'Usage: python {} command [--dev_no dev_no] [--nickname nickname] [--name name]'.format(__file__)
-commands = '|'.join(['get_events', 'get_appliances', 'post_signal'])
+commands = '|'.join(['get_events', 'get_appliances', 'post_signal', 'post_aircon'])
 argparser = ArgumentParser(usage=usage)
 argparser.add_argument('command', type=str, help=commands)
-argparser.add_argument('-d', '--dev_no', type=int, dest='dev_no', default=0, help='device number for reading temperature')
+argparser.add_argument('-d', '--dev_no',   type=int, dest='dev_no', default=0, help='device number for reading temperature')
 argparser.add_argument('-a', '--nickname', type=str, dest='nickname', help='appliance name')
-argparser.add_argument('-s', '--name', type=str, dest='name', help='signal name')
+argparser.add_argument('-s', '--name',     type=str, dest='name',     help='signal name')
+argparser.add_argument('-t', '--temp',     type=str, dest='temp',     help='aircon temperature [-2|-1|0|1|2]]')
+argparser.add_argument('-m'  '--mode',     type=str, dest='mode',     help='aircom operating mode [cool|warm|dry|blow|auto]')
+argparser.add_argument('-v', '--volume',   type=str, dest='volume',   help='aircon air volume [1|auto]')
+argparser.add_argument('-i', '--dir',      type=str, dest='dir',      help='aircon air direction [auto|still]')
+argparser.add_argument('-b', '--button',   type=str, dest='button',   help='aircon button')
 args = argparser.parse_args()
 
 def get_token():
@@ -36,6 +42,10 @@ def get_appliance(nickname):
     if len(matched) == 0:
         raise ValueError(nickname)
     return matched[0]
+
+def get_appliance_id(nicnname):
+    appliance = get_appliance(nickname)
+    return appliance['id']
 
 def get_signal(nickname, name):
     appliance = get_appliance(nickname)
@@ -62,6 +72,23 @@ elif args.command.startswith('post_sig'):
     signal_id = get_signal_id(nickname, name)
     url += "/1/signals/" + signal_id + "/send"
     data = "\r\n"
+elif args.command.startswith('post_aircon'):
+    nickname = args.nickname.decode('utf-8')
+    appliance_id = get_appliance_id(nickname)
+    url += "/1/appliances/" + appliance_id + "/aircon_settings"
+    data = {}
+    if args.temp is not None:
+        data["temperature"] = args.temp
+    if args.mode is not None:
+        data["operation_mode"] = args.mode
+    if args.volume is not None:
+        data["air_volume"] = args.volume
+    if args.dir is not None:
+        data["air_direction"] = args.dir
+    if args.button is not None:
+        data["button"] = args.button
+    print(data)
+    data = urlencode(data)
 else:
     print("Command error: ", args.command)
     sys.exit(1)
