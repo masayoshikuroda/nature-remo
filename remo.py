@@ -24,7 +24,7 @@ argparser.add_argument('-t', '--temp',     type=str, dest='temp',     help='airc
 argparser.add_argument('-m'  '--mode',     type=str, dest='mode',     help='aircom operating mode [cool|warm|dry|blow|auto]')
 argparser.add_argument('-v', '--volume',   type=str, dest='volume',   help='aircon air volume [1|auto]')
 argparser.add_argument('-i', '--dir',      type=str, dest='dir',      help='aircon air direction [auto|still]')
-argparser.add_argument('-b', '--button',   type=str, dest='button',   help='aircon button')
+argparser.add_argument('-b', '--button',   type=str, dest='button',   help='aircon button [power-off]')
 args = argparser.parse_args()
 
 def get_token():
