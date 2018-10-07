@@ -26,15 +26,16 @@ Nature RemoのAPIを発行し、家電を制御する。
 
 ### 温度、湿度の取得
 
-$ python remo.py get_events -n 0
+$ python remo.py get_events
 
 `引数`
-JSON形式
+- dev_no: 通常 0
 
 `戻り値`
 JSON形式
 
-値のみ取得したい場合、jqコマンドを利用する。 例) ...| jq '.te.val'
+フォーマットした方がわかりやすい。 例) ... | jq .
+値のみ取得したい場合、jqコマンドを利用する。 例) ... | jq '.te.val'
 
 ### 家電情報の取得
 
