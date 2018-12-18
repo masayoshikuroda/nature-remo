@@ -20,7 +20,7 @@ Nature RemoのAPIを発行し、家電を制御する。
 以下のファイルを作成する。
 
 - token.txt: 作成したトークン文字列が格納されているテキストファイル
-- appliances.json: Rget_appliancesコマンドで取得した情報を保存したJSONファイル
+- appliances.json: get_appliancesコマンドで取得した情報を保存したJSONファイル
 
 ## 利用方法
 
