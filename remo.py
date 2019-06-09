@@ -99,7 +99,7 @@ headers = { "Authorization" : "Bearer " + token }
 req = Request(url, data=data, headers=headers)
 try:
     res = urlopen(req)
-except HTTPError, e:
+except HTTPError as e:
     print('Error code: ', e.getcode())
     sys.exit(1)
 except URLError as e:
