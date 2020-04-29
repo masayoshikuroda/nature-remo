@@ -1,11 +1,11 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # coding=utf-8
 
 import sys
 import os
 import json
-from urllib import urlencode
-from urllib2 import Request, urlopen, URLError, HTTPError
+from urllib.parse import urlencode
+from urllib.request import urlopen, Request, URLError, HTTPError
 from argparse import ArgumentParser
 
 BASE_URL = "https://api.nature.global"
@@ -14,7 +14,7 @@ TOKEN_FILE      = os.path.join(BASE_PATH, 'token.txt')
 APPLIANCES_FILE = os.path.join(BASE_PATH, 'appliances.json')
 
 usage = 'Usage: python {} command [--dev_no dev_no] [--nickname nickname] [--name name]'.format(__file__)
-commands = '|'.join(['get_events', 'get_appliances', 'post_signal', 'post_aircon'])
+commands = '|'.join(['get_devices', 'get_appliances', 'get_events', 'post_signal', 'post_aircon', 'get_smartmeter'])
 argparser = ArgumentParser(usage=usage)
 argparser.add_argument('command', type=str, help=commands)
 argparser.add_argument('-d', '--dev_no',   type=int, dest='dev_no', default=0, help='device number for reading temperature')
@@ -62,9 +62,13 @@ def get_signal_id(nickname, name):
 
 url = BASE_URL
 data = None
-if args.command.startswith('get_eve'):
+if args.command.startswith('get_dev'):
+    url += "/1/devices"
+elif args.command.startswith('get_eve'):
     url += "/1/devices"
 elif args.command.startswith('get_app'):
+    url += "/1/appliances"
+elif args.command.startswith('get_sma'):
     url += "/1/appliances"
 elif args.command.startswith('post_sig'):
     nickname = args.nickname.decode('utf-8')
@@ -99,7 +103,7 @@ headers = { "Authorization" : "Bearer " + token }
 req = Request(url, data=data, headers=headers)
 try:
     res = urlopen(req)
-except HTTPError, e:
+except HTTPError as e:
     print('Error code: ', e.getcode())
     sys.exit(1)
 except URLError as e:
@@ -108,8 +112,17 @@ except URLError as e:
 
 body = res.read()
 
-if args.command.startswith('get_eve'):
+if args.command.startswith('get_dev'):
+    devices = json.loads(body)
+    body = ""
+    for i, device in enumerate(devices):
+        body += str(i) + "," 
+        body += json.dumps(device['name'],ensure_ascii=False)
+        body +=  "\r\n"
+elif args.command.startswith('get_eve'):
     body = json.loads(body)[args.dev_no]['newest_events']
     body = json.dumps(body)
-
+elif args.command.startswith('get_sma'):
+    body = json.loads(body)[0]['smart_meter']['echonetlite_properties']
+    body = json.dumps(body)    
 print(body)

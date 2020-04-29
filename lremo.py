@@ -1,10 +1,10 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # coding=utf-8
 
 import sys
 import os
 import json
-from urllib2 import Request, urlopen, URLError, HTTPError
+from urllib.request import urlopen, Request, URLError, HTTPError
 from argparse import ArgumentParser
 from zeroconf import ServiceBrowser, Zeroconf
 
