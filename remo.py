@@ -110,19 +110,19 @@ except URLError as e:
     print('Reason: ', e.reason)
     sys.exit(1)
 
-body = res.read()
+body = res.read().decode()
 
 if args.command.startswith('get_dev'):
     devices = json.loads(body)
     body = ""
     for i, device in enumerate(devices):
         body += str(i) + "," 
-        body += json.dumps(device['name'],ensure_ascii=False)
+        body += json.dumps(device['name'], ensure_ascii=False)
         body +=  "\r\n"
 elif args.command.startswith('get_eve'):
     body = json.loads(body)[args.dev_no]['newest_events']
-    body = json.dumps(body)
+    body = json.dumps(body, ensure_ascii=False)
 elif args.command.startswith('get_sma'):
     body = json.loads(body)[0]['smart_meter']['echonetlite_properties']
-    body = json.dumps(body)    
+    body = json.dumps(body, ensure_ascii=False)    
 print(body)
