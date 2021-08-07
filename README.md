@@ -26,7 +26,7 @@ Nature RemoのAPIを発行し、家電を制御する。
 
 ### デバイス一覧
 
-$ python3 remo.py get_devices
+$ python3 remo.py list_devices
 
 `引数`
 なし
@@ -35,6 +35,18 @@ $ python3 remo.py get_devices
 CSV形式
 
 複数のデバイスを利用している場合に指定するデバイスの番号を確認する。
+
+### 家電一覧
+
+$ python3 remo.py list_appliances
+
+`引数`
+なし
+
+`戻り値`
+CSV形式
+
+複数のスマートメータを利用している場合に指定するアプライアンス番号を確認する。
 
 ### 家電情報の取得
 
@@ -93,10 +105,10 @@ JSON形式
 
 ### 電力量消費の取得
 
-$ python3 remo.py get_smart_meter --dev_no 0
+$ python3 remo.py get_smart_meter --app_no 0
 
 `引数`
-- dev_no: 電力量消費を取得する Nature Remo Eの番号
+- app_no: 電力量消費を取得する Nature Remo Eのアプライアンス番号
 
 `戻り値`
 JSON形式

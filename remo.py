@@ -8,17 +8,18 @@ from urllib.parse import urlencode
 from urllib.request import urlopen, Request, URLError, HTTPError
 from argparse import ArgumentParser
 
-BASE_URL = "https://api.nature.global"
+BASE_URL        = "https://api.nature.global"
 BASE_PATH       = os.path.dirname(os.path.abspath(__file__))
 TOKEN_FILE      = os.path.join(BASE_PATH, 'token.txt')
 APPLIANCES_FILE = os.path.join(BASE_PATH, 'appliances.json')
 
-usage = 'Usage: python {} command [--dev_no dev_no] [--nickname nickname] [--name name]'.format(__file__)
-commands = '|'.join(['get_devices', 'get_appliances', 'get_events', 'post_signal', 'post_aircon', 'get_smartmeter'])
+usage = 'Usage: python {} command [--dev_no dev_no] [--app_no app_no] [--nickname nickname] [--name name]'.format(__file__)
+commands = '|'.join(['list_devices', 'list_appliances', 'get_appliances', 'get_events', 'post_signal', 'post_aircon', 'get_smartmeter'])
 argparser = ArgumentParser(usage=usage)
 argparser.add_argument('command', type=str, help=commands)
 argparser.add_argument('-d', '--dev_no',   type=int, dest='dev_no', default=0, help='device number for reading temperature')
-argparser.add_argument('-a', '--nickname', type=str, dest='nickname', help='appliance name')
+argparser.add_argument('-a', '--app_no',   type=int, dest='app_no', default=0, help='appliance number for reading smartmeter')
+argparser.add_argument('-n', '--nickname', type=str, dest='nickname', help='appliance name')
 argparser.add_argument('-s', '--name',     type=str, dest='name',     help='signal name')
 argparser.add_argument('-t', '--temp',     type=str, dest='temp',     help='aircon temperature [-2|-1|0|1|2]]')
 argparser.add_argument('-m'  '--mode',     type=str, dest='mode',     help='aircom operating mode [cool|warm|dry|blow|auto]')
@@ -62,8 +63,10 @@ def get_signal_id(nickname, name):
 
 url = BASE_URL
 data = None
-if args.command.startswith('get_dev'):
+if args.command.startswith('list_dev'):
     url += "/1/devices"
+elif args.command.startswith('list_app'):
+    url += "/1/appliances"
 elif args.command.startswith('get_eve'):
     url += "/1/devices"
 elif args.command.startswith('get_app'):
@@ -96,7 +99,7 @@ elif args.command.startswith('post_aircon'):
 else:
     print("Command error: ", args.command)
     sys.exit(1)
-# print url
+#print(url)
 
 token = get_token()
 headers = { "Authorization" : "Bearer " + token }
@@ -111,18 +114,26 @@ except URLError as e:
     sys.exit(1)
 
 body = res.read().decode()
+#print(body)
 
-if args.command.startswith('get_dev'):
+if args.command.startswith('list_dev'):
     devices = json.loads(body)
     body = ""
     for i, device in enumerate(devices):
         body += str(i) + "," 
         body += json.dumps(device['name'], ensure_ascii=False)
         body +=  "\r\n"
+elif args.command.startswith('list_app'):
+    appliances = json.loads(body)
+    body = ""
+    for i, appliance in enumerate(appliances):
+        body += str(i) + ","
+        body += json.dumps(appliance['nickname'], ensure_ascii=False)
+        body += "\r\n"
 elif args.command.startswith('get_eve'):
     body = json.loads(body)[args.dev_no]['newest_events']
     body = json.dumps(body, ensure_ascii=False)
 elif args.command.startswith('get_sma'):
-    body = json.loads(body)[0]['smart_meter']['echonetlite_properties']
+    body = json.loads(body)[args.app_no]['smart_meter']['echonetlite_properties']
     body = json.dumps(body, ensure_ascii=False)    
 print(body)
