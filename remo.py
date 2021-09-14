@@ -39,7 +39,7 @@ def get_appliance(nickname):
     with open(APPLIANCES_FILE, 'r') as f:
         appliances = json.load(f)
 
-    matched = filter(lambda a:a['nickname'] == nickname, appliances)
+    matched = list(filter(lambda a:a['nickname'] == nickname, appliances))
     if len(matched) == 0:
         raise ValueError(nickname)
     return matched[0]
@@ -52,7 +52,7 @@ def get_signal(nickname, name):
     appliance = get_appliance(nickname)
     signals = appliance['signals']
 
-    matched = filter(lambda s:s['name'] == name, signals)
+    matched = list(filter(lambda s:s['name'] == name, signals))
     if len(matched) == 0:
         raise ValueError(name)
     return matched[0]
@@ -74,13 +74,13 @@ elif args.command.startswith('get_app'):
 elif args.command.startswith('get_sma'):
     url += "/1/appliances"
 elif args.command.startswith('post_sig'):
-    nickname = args.nickname.decode('utf-8')
-    name = args.name.decode('utf-8')
+    nickname = args.nickname
+    name = args.name
     signal_id = get_signal_id(nickname, name)
     url += "/1/signals/" + signal_id + "/send"
-    data = "\r\n"
+    data = "\r\n".encode()
 elif args.command.startswith('post_aircon'):
-    nickname = args.nickname.decode('utf-8')
+    nickname = args.nickname
     appliance_id = get_appliance_id(nickname)
     url += "/1/appliances/" + appliance_id + "/aircon_settings"
     data = {}
